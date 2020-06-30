@@ -1,3 +1,3 @@
 # scripts
 
-Repositório dedicado a Scripts diversos.
+Repositorie dedicated to scripts.
