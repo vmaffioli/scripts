@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 import requests
+import codecs
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -17,8 +18,8 @@ driver = webdriver.Chrome(options=option)
 driver.implicitly_wait(3)
 
 def start():
-    anime_list = load_list(url.anime_list)
-    scraping(anime_list)
+    a = load_list(url.anime_list)
+    scraping(a)
 
     return
 
@@ -47,7 +48,7 @@ def find_content(soup, to_find): # find content in soup
             content.append(a.text)
     elif to_find == cd.ht:
         for a in soup.find_all("a"):
-            content.append(a.href)
+            content.append(a.get('href'))
     if len(content) == 1:
         content = str(content).strip('[]')
   
@@ -63,31 +64,33 @@ def format_token(token):
 def write_data(to_write, file):
     with codecs.open(file, 'a', encoding='utf-8') as fp:
         for data in to_write:
-            fp.write(data)    
+            fp.write(data + "\n")    
 
     return     
 
 def load_list(url): #start the script
     anime_list = []
     condition = msg_get_input()
-    counter.page += 1
     if condition == "n":
         msg_build_list()
-        while 1 == 1: #get anime list
-            try:  # while break  
+        try:  # while break
+            while 1 == 1: #get anime list
+                counter.page += 1
                 if counter.page > 1:
-                    a = "https://www.animesking.com/category/animes/" + str(counter.page) + "/"
+                    a = "https://www.animesking.com/category/animes/page/" + str(counter.page) + "/"
+                    print(a)
                     driver_load(a)
-                else:
-                    driver_load(url.anime_list)
-                    soup = get_soup(xpath.anime_list, cd.x)
-                    content = find_content(soup, cd.ht)
-                    write_data(content, fl.anime_list) # write captured anime list animelist.txt
-                    msg_page_counter()
-            except: 
-                for item in open(fl.anime_list, 'r'):
-                    anime_list.append(item)
-                break        
+                else:  
+                    driver_load(url)
+                soup = get_soup(xpath.anime_list, cd.xp)
+                content = find_content(soup, cd.ht)
+                write_data(content, fl.anime_list) # write captured anime list animelist.txt
+                msg_page_counter()
+        except Exception as e: 
+            print(e)
+            for item in open(fl.anime_list, 'r'):
+                anime_list.append(item)
+            pass        
     elif condition == "y":
         msg_import_list()
         for item in open(fl.anime_list, 'r'):
