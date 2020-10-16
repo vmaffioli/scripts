@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 import requests
 import codecs
+import json
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -9,19 +10,12 @@ from data import *
 from msg import *
 
 
-
 # . chrome instance 
 option = Options()
 option.headless = True
 option.add_argument("--incognito")
 driver = webdriver.Chrome(options=option)
 driver.implicitly_wait(3)
-
-def start():
-    a = load_list(url.anime_list)
-    scraping(a)
-
-    return
 
 def driver_load(url):    
     driver.get(url)
@@ -46,20 +40,19 @@ def find_content(soup, to_find): # find content in soup
     if to_find == cd.at: # -!
         for a in soup.find_all("a"):
             content.append(a.text)
-    elif to_find == cd.ht:
+    elif to_find == cd.ah:
         for a in soup.find_all("a"):
             content.append(a.get('href'))
+    elif to_find == cd.st:
+        for a in soup.find_all("strong"):
+            content.append(a.text)
+    elif to_find == cd.t:
+        for a in soup.find_all("a"):
+            content.append(a.get('title'))
     if len(content) == 1:
         content = str(content).strip('[]')
   
     return content   
-
-def format_token(token):
-    p_ini = token.split('.php?')
-    print("----p_ini   " + p_ini)
-    # =!
-
-    return f_token
 
 def write_data(to_write, file):
     with codecs.open(file, 'a', encoding='utf-8') as fp:
@@ -78,12 +71,12 @@ def load_list(url): #start the script
                 counter.page += 1
                 if counter.page > 1:
                     a = "https://www.animesking.com/category/animes/page/" + str(counter.page) + "/"
-                    print(a)
+                    #print(a)
                     driver_load(a)
                 else:  
                     driver_load(url)
                 soup = get_soup(xpath.anime_list, cd.xp)
-                content = find_content(soup, cd.ht)
+                content = find_content(soup, cd.ah)
                 write_data(content, fl.anime_list) # write captured anime list animelist.txt
                 msg_page_counter()
         except Exception as e: 
@@ -102,6 +95,7 @@ def load_list(url): #start the script
     return anime_list
 
 def scraping(animes):
+    anime_dict = {}
     for anime in animes: #  get ep lists for each anime listed
         driver_load(anime)
         # get title
@@ -125,23 +119,64 @@ def scraping(animes):
         element_img = driver.find_element_by_xpath(xpath.cover)        
         anime_cover = element_img.get_attribute('src')
         # get tabs
-        soup = get_soup(xpath.tabs, cd.xp) 
+        soup = get_soup(xpath.tabs, cd.xp)
+        i = 1
+        content_tabs = find_content(soup, cd.at)
+        tab_dict = {}
+        for tab in content_tabs:
+            #print(tab)
+            soup = get_soup(xpath.lang, cd.xp)
+            languages = find_content(soup, cd.st)
+            ii = 1
+            lang_dict = {}
+            for n in languages:
+                iii = 0
+                ep_dict = {}
+                a = str(xpath.eps1 + "[" + str(i) + "]" + str(xpath.eps2) + "[" + str(ii) + "]")
 
-        print(anime_title)
-        print(anime_desc)
-        print(anime_cover)
+                try:
+                    soup = get_soup(a, cd.xp)
+                    ep_titles = find_content(soup, cd.t)
+                    ep_tokens = find_content(soup, cd.ah)
+                except:
+                    ep_titles = cd.eti
+                    ep_tokens = cd.eto
 
-    return
+                if len(ep_titles) == 0:
+                    ep_url = cd.eur
+                    ep_dict.update({cd.edc : cd.edc})   
+                else:         
+                    if type(ep_titles) == str:
+                        if len(token[22:]) != 59:
+                            ep_url = "https://www.animesking.com/play/player/serverp2.php?f=" + ep_tokens[22:]
+                        else:
+                            ep_url = "https://www.animesking.com/play/player/p1.php?v=" + ep_tokens[22:]
+                        
+                        ep_dict.update({ep_titles : ep_url})
+                    else:    
+                        for token in ep_tokens:                         
+                            if len(token[21:]) == 60:
+                                ep_url = "https://www.animesking.com/play/player/p1.php?v=" + token[21:]
+                            elif len(token[21:]) == 121:
+                                ep_url = "https://www.animesking.com/play/player/wix.php?w=" + token[21:]                        
+                            else:
+                                ep_url = "https://www.animesking.com/play/player/serverp2.php?f=" + token[21:]
 
-start()
+                            ep_dict.update({ep_titles[iii] : ep_url})
+                            iii += 1
+                                  
+                lang_dict.update({n : ep_dict})  
+                ii += 1                 
+
+            tab_dict.update({tab : lang_dict})    
+            i += 1          
+
+        content_dict.update({"cover" : anime_cover, "description" : anime_desc, "videos" : tab_dict})
+        anime_dict.update({anime_title : content_dict})
+        print(anime_dict)
+    return anime_dict
 
 
 
     
 
-
-    
-
-
-
-quit()
