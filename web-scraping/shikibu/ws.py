@@ -71,7 +71,6 @@ def load_list(url): #start the script
                 counter.page += 1
                 if counter.page > 1:
                     a = "https://www.animesking.com/category/animes/page/" + str(counter.page) + "/"
-                    #print(a)
                     driver_load(a)
                 else:  
                     driver_load(url)
@@ -96,6 +95,7 @@ def load_list(url): #start the script
 
 def scraping(animes):
     anime_dict = {}
+    iiii = counter.json
     for anime in animes: #  get ep lists for each anime listed
         driver_load(anime)
         # get title
@@ -113,7 +113,6 @@ def scraping(animes):
                 i += 1
                 pass
             except:
-                
                 break    
         # get cover
         element_img = driver.find_element_by_xpath(xpath.cover)        
@@ -123,8 +122,11 @@ def scraping(animes):
         i = 1
         content_tabs = find_content(soup, cd.at)
         tab_dict = {}
+        if type(content_tabs) != list:
+            t = content_tabs
+            content_tabs = []
+            content_tabs.append(t)
         for tab in content_tabs:
-            #print(tab)
             soup = get_soup(xpath.lang, cd.xp)
             languages = find_content(soup, cd.st)
             ii = 1
@@ -133,7 +135,6 @@ def scraping(animes):
                 iii = 0
                 ep_dict = {}
                 a = str(xpath.eps1 + "[" + str(i) + "]" + str(xpath.eps2) + "[" + str(ii) + "]")
-
                 try:
                     soup = get_soup(a, cd.xp)
                     ep_titles = find_content(soup, cd.t)
@@ -141,7 +142,6 @@ def scraping(animes):
                 except:
                     ep_titles = cd.eti
                     ep_tokens = cd.eto
-
                 if len(ep_titles) == 0:
                     ep_url = cd.eur
                     ep_dict.update({cd.edc : cd.edc})   
@@ -154,26 +154,25 @@ def scraping(animes):
                         
                         ep_dict.update({ep_titles : ep_url})
                     else:    
-                        for token in ep_tokens:                         
+                        for token in ep_tokens:   
+                            token.strip()
+                            token = token.replace("\n", "")                      
                             if len(token[21:]) == 60:
                                 ep_url = "https://www.animesking.com/play/player/p1.php?v=" + token[21:]
                             elif len(token[21:]) == 121:
-                                ep_url = "https://www.animesking.com/play/player/wix.php?w=" + token[21:]                        
-                            else:
+                                ep_url = "https://www.animesking.com/play/player/wix.php?w=" + token[21:]                                              
+                            else:                      
                                 ep_url = "https://www.animesking.com/play/player/serverp2.php?f=" + token[21:]
-
                             ep_dict.update({ep_titles[iii] : ep_url})
-                            iii += 1
-                                  
+                            iii += 1                
                 lang_dict.update({n : ep_dict})  
                 ii += 1                 
-
             tab_dict.update({tab : lang_dict})    
             i += 1          
+        anime_dict.update({ iiii : { "title" : anime_title , "cover" : anime_cover, "description" : anime_desc, "videos" : tab_dict}})     
+        print(str(iiii) + "/" + str(len(animes)))
+        iiii += 1
 
-        content_dict.update({"cover" : anime_cover, "description" : anime_desc, "videos" : tab_dict})
-        anime_dict.update({anime_title : content_dict})
-        print(anime_dict)
     return anime_dict
 
 

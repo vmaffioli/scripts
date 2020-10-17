@@ -1,4 +1,4 @@
-from ws03 import *
+from ws import *
 
 a = load_list(url.anime_list)
 to_json = scraping(a)
