@@ -68,16 +68,16 @@ def load_list(url): #start the script
         msg_build_list()
         try:  # while break
             while 1 == 1: #get anime list
-                counter.page += 1
-                if counter.page > 1:
-                    a = "https://www.animesking.com/category/animes/page/" + str(counter.page) + "/"
+                ct.page += 1
+                if ct.page > 1:
+                    a = "https://www.animesking.com/category/animes/page/" + str(ct.page) + "/"
                     driver_load(a)
                 else:  
                     driver_load(url)
                 soup = get_soup(xpath.anime_list, cd.xp)
                 content = find_content(soup, cd.ah)
                 write_data(content, fl.anime_list) # write captured anime list animelist.txt
-                msg_page_counter()
+                msg_page_ct()
         except Exception as e: 
             print(e)
             for item in open(fl.anime_list, 'r'):
@@ -95,87 +95,89 @@ def load_list(url): #start the script
 
 def scraping(animes):
     anime_dict = {}
-    iiii = counter.json
+    iiii = ct.json
+    iiiii = ct.error
     for anime in animes: #  get ep lists for each anime listed
-        driver_load(anime)
-        # get title
-        soup = get_soup(xpath.title, cd.xp)  
-        anime_title = soup.find('h1').contents[0] 
-        # get description
-        i = counter.desc   
-        anime_desc = ""
-        while 1 == 1:  
-            try:    
-                xpath_ani_desc_ct = xpath.desc + "[" + str(i) + "]"    
-                desc = driver.find_element_by_xpath(xpath_ani_desc_ct).text       
-                if desc != "":
-                    anime_desc = anime_desc + desc
-                i += 1
-                pass
-            except:
-                break    
-        # get cover
-        element_img = driver.find_element_by_xpath(xpath.cover)        
-        anime_cover = element_img.get_attribute('src')
-        # get tabs
-        soup = get_soup(xpath.tabs, cd.xp)
-        i = 1
-        content_tabs = find_content(soup, cd.at)
-        tab_dict = {}
-        if type(content_tabs) != list:
-            t = content_tabs
-            content_tabs = []
-            content_tabs.append(t)
-        for tab in content_tabs:
-            soup = get_soup(xpath.lang, cd.xp)
-            languages = find_content(soup, cd.st)
-            ii = 1
-            lang_dict = {}
-            for n in languages:
-                iii = 0
-                ep_dict = {}
-                a = str(xpath.eps1 + "[" + str(i) + "]" + str(xpath.eps2) + "[" + str(ii) + "]")
-                try:
-                    soup = get_soup(a, cd.xp)
-                    ep_titles = find_content(soup, cd.t)
-                    ep_tokens = find_content(soup, cd.ah)
+        try:
+            driver_load(anime)
+            # get title
+            soup = get_soup(xpath.title, cd.xp)  
+            anime_title = soup.find('h1').contents[0] 
+            # get description
+            i = ct.desc   
+            anime_desc = ""
+            while 1 == 1:  
+                try:    
+                    xpath_ani_desc_ct = xpath.desc + "[" + str(i) + "]"    
+                    desc = driver.find_element_by_xpath(xpath_ani_desc_ct).text       
+                    if desc != "":
+                        anime_desc = anime_desc + desc
+                    i += 1
+                    pass
                 except:
-                    ep_titles = cd.eti
-                    ep_tokens = cd.eto
-                if len(ep_titles) == 0:
-                    ep_url = cd.eur
-                    ep_dict.update({cd.edc : cd.edc})   
-                else:         
-                    if type(ep_titles) == str:
-                        if len(token[22:]) != 59:
-                            ep_url = "https://www.animesking.com/play/player/serverp2.php?f=" + ep_tokens[22:]
-                        else:
-                            ep_url = "https://www.animesking.com/play/player/p1.php?v=" + ep_tokens[22:]
-                        
-                        ep_dict.update({ep_titles : ep_url})
-                    else:    
-                        for token in ep_tokens:   
-                            token.strip()
-                            token = token.replace("\n", "")                      
-                            if len(token[21:]) == 60:
-                                ep_url = "https://www.animesking.com/play/player/p1.php?v=" + token[21:]
-                            elif len(token[21:]) == 121:
-                                ep_url = "https://www.animesking.com/play/player/wix.php?w=" + token[21:]                                              
-                            else:                      
-                                ep_url = "https://www.animesking.com/play/player/serverp2.php?f=" + token[21:]
-                            ep_dict.update({ep_titles[iii] : ep_url})
-                            iii += 1                
-                lang_dict.update({n : ep_dict})  
-                ii += 1                 
-            tab_dict.update({tab : lang_dict})    
-            i += 1          
-        anime_dict.update({ iiii : { "title" : anime_title , "cover" : anime_cover, "description" : anime_desc, "videos" : tab_dict}})     
-        print(str(iiii) + "/" + str(len(animes)))
-        iiii += 1
-
+                    break    
+            # get cover
+            element_img = driver.find_element_by_xpath(xpath.cover)        
+            anime_cover = element_img.get_attribute('src')
+            # get tabs
+            soup = get_soup(xpath.tabs, cd.xp)
+            i = 1
+            content_tabs = find_content(soup, cd.at)
+            tab_dict = {}
+            if type(content_tabs) != list:
+                t = content_tabs
+                content_tabs = []
+                content_tabs.append(t)
+            for tab in content_tabs:
+                soup = get_soup(xpath.lang, cd.xp)
+                languages = find_content(soup, cd.st)
+                ii = 1
+                lang_dict = {}
+                for n in languages:
+                    iii = 0
+                    ep_dict = {}
+                    a = str(xpath.eps1 + "[" + str(i) + "]" + str(xpath.eps2) + "[" + str(ii) + "]")
+                    try:
+                        soup = get_soup(a, cd.xp)
+                        ep_titles = find_content(soup, cd.t)
+                        ep_tokens = find_content(soup, cd.ah)
+                    except:
+                        ep_titles = cd.eti
+                        ep_tokens = cd.eto
+                    if len(ep_titles) == 0:
+                        ep_url = cd.eur
+                        ep_dict.update({cd.edc : cd.edc})   
+                    else:         
+                        if type(ep_titles) == str:
+                            if len(token[22:]) != 59:
+                                ep_url = fl.vd2 + ep_tokens[22:]
+                            else:
+                                ep_url = fl.vd2 + ep_tokens[22:]
+                            
+                            ep_dict.update({ep_titles : ep_url})
+                        else:    
+                            for token in ep_tokens:   
+                                token.strip()
+                                token = token.replace("\n", "")                      
+                                if len(token[21:]) == 60:
+                                    ep_url =  + token[21:]
+                                elif len(token[21:]) == 121:
+                                    ep_url = fl.vd3 + token[21:]                                              
+                                else:                      
+                                    ep_url = fl.vd2 + token[21:]
+                                ep_dict.update({ep_titles[iii] : ep_url})
+                                iii += 1                
+                    lang_dict.update({n : ep_dict})  
+                    ii += 1                 
+                tab_dict.update({tab : lang_dict})    
+                i += 1          
+            anime_dict.update({ iiii : { "title" : anime_title , "cover" : anime_cover, "description" : anime_desc, "videos" : tab_dict}})     
+            print(str(iiii) + "/" + str(len(animes)))
+            iiii += 1
+        except:
+            iiiii += 1
+            fl.error_list.append(anime)
+            msg_error(iiiii)
     return anime_dict
 
-
-
-    
 
