@@ -150,9 +150,9 @@ def scraping(animes):
                     else:         
                         if type(ep_titles) == str:
                             if len(token[22:]) != 59:
-                                ep_url = fl.vd2 + ep_tokens[22:]
+                                ep_url = url.vd2 + ep_tokens[22:]
                             else:
-                                ep_url = fl.vd2 + ep_tokens[22:]
+                                ep_url = url.vd2 + ep_tokens[22:]
                             
                             ep_dict.update({ep_titles : ep_url})
                         else:    
@@ -160,11 +160,11 @@ def scraping(animes):
                                 token.strip()
                                 token = token.replace("\n", "")                      
                                 if len(token[21:]) == 60:
-                                    ep_url =  + token[21:]
+                                    ep_url = url.vd1 + token[21:]
                                 elif len(token[21:]) == 121:
-                                    ep_url = fl.vd3 + token[21:]                                              
+                                    ep_url = url.vd3 + token[21:]                                              
                                 else:                      
-                                    ep_url = fl.vd2 + token[21:]
+                                    ep_url = url.vd2 + token[21:]
                                 ep_dict.update({ep_titles[iii] : ep_url})
                                 iii += 1                
                     lang_dict.update({n : ep_dict})  
@@ -174,7 +174,8 @@ def scraping(animes):
             anime_dict.update({ iiii : { "title" : anime_title , "cover" : anime_cover, "description" : anime_desc, "videos" : tab_dict}})     
             print(str(iiii) + "/" + str(len(animes)))
             iiii += 1
-        except:
+        except Exception as e:
+            print(e)
             iiiii += 1
             fl.error_list.append(anime)
             msg_error(iiiii)
