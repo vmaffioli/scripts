@@ -1,3 +1,0 @@
-pyautogui
-
-https://github.com/asweigart/pyautogui/blob/master/docs/keyboard.rst
