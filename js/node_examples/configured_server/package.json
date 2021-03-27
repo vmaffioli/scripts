@@ -1,0 +1,30 @@
+{
+  "name": "nlw04-nodejs",
+  "version": "1.0.0",
+  "description": "lessons node",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vmaffioli/NLW04-NODEjs.git"
+  },
+  "author": "vmaffioli <vinimaffioli@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vmaffioli/NLW04-NODEjs/issues"
+  },
+  "homepage": "https://github.com/vmaffioli/NLW04-NODEjs#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "reflect-metadata": "^0.1.13",
+    "ts-node-dev": "^1.1.2",
+    "typeorm": "^0.2.31"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "typescript": "^4.2.2"
+  }
+}
