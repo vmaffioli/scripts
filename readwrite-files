@@ -1,0 +1,17 @@
+var fs = require('fs');
+
+
+fs.readFile('./data.txt', 'utf-8', function (err, data) { //read
+    var linhas = data.split(/\r?\n/);
+
+    linhas.forEach(function (linha) {
+
+    });
+
+
+});
+
+fs.writeFile('data.json', myJsonString, (err) => { //write
+    if (err) throw err;
+    console.log('O arquivo foi criado!');
+});
