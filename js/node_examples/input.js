@@ -4,9 +4,9 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-rl.question("Number:", function(n) {
-    rl.question("Language:\n(default en-us)", function(l) {
-        console.log(carnn(n,l))
+rl.question("What is your name ? ", function(name) {
+    rl.question("Where do you live ? ", function(country) {
+        console.log(`${name}, is a citizen of ${country}`);
         rl.close();
     });
 });
