@@ -1,0 +1,38 @@
+:root {
+  /* palette of colors */
+  --ROOT1: rgba(42,176,189,1);
+  --ROOT2: rgba(101,49,71,1);
+  --ROOT3: rgba(252,251,227,1);
+  --ROOT4: rgba(224,36,119,1);
+  --ROOT5: rgba(237,231,213,1);
+  --ROOT6: rgba(0,0,0,1);
+  --ROOT7: rgba(45,45,45,1);
+
+  /* BG = background, T = title, P = text, E = element, L = light, D = dark  */
+  --BGL1: var(--ROOT3);
+  --BGL2: var(--ROOT1);
+  --BGD1: var(--ROOT6);
+  --BGD2: var(--ROOT7);
+  --TL1: var(--ROOT2);
+  --TL2: var(--ROOT1);
+  --TD1: var(--ROOT1);
+  --TD2: var(--ROOT4);
+  --PL1: var(--ROOT6);
+  --PL2: var(--ROOT7);
+  --PD1: var(--ROOT3);
+  --PD2: var(--ROOT5);
+  --EL1: var(--ROOT1);
+  --EL2: var(--ROOT4);
+  --ED1: var(--ROOT1);
+  --ED2: var(--ROOT4);
+  
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
