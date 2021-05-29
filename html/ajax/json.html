@@ -1,0 +1,21 @@
+<div id="output" class="oput">Nothing</div>
+
+<script>
+    var myContainer = "";
+
+    var a = new XMLHttpRequest();
+    a.open("GET", "https://api.myjson.com/bins/1dwnm", true);
+    a.onreadystatechange = function () {
+        console.log(this);
+        if (this.readyState == 4) {
+            var obj = JSON.parse(this.responseText);
+            for (i = 0; i < obj.length; i++) {
+                myContainer += obj[i].name.first + " " + obj[i].name.last + " " + obj[i].age + "<br>";
+            }
+            document.getElementById("output").innerHTML = myContainer;
+            console.log(obj);
+        }
+
+    }
+    a.send();
+</script>
